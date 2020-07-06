@@ -14,6 +14,21 @@ const io = socketio(server);
 app.use(cors());
 app.use(router);
 
+const whitelist = ['https://chatbox7.netlify.app/', 'https://chat-box-bpc.herokuapp.com/']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+ 
+app.get('/products/:id', cors(corsOptions), function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for a whitelisted domain.'})
+})
+
 io.on('connect', (socket) => {
     console.log('A user has connected')
   socket.on('join', ({ name, room }, callback) => {
