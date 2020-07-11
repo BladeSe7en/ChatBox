@@ -15,8 +15,6 @@ import { setName, setRoom, setUsers, setMessages, setRoomList } from './ChatActi
 let socket;
 
 const Chat = ({ location }) => {
- // const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
   const [users, setUsers] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -31,9 +29,6 @@ const Chat = ({ location }) => {
     const { name, room } = queryString.parse(location.search);
 
     socket = io(ENDPOINT);
-
-    setRoom(room);
-    //dispatch(setName(name))
 
     socket.emit('join', { name, room }, (error) => {
       if(error) {
@@ -63,7 +58,7 @@ const Chat = ({ location }) => {
   return (
     <div className="outerContainer">
       <div className="container">
-          <InfoBar room={room} />
+          <InfoBar />
           <Messages messages={messages} name={name} />
           <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
