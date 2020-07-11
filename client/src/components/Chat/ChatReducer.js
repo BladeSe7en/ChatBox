@@ -1,28 +1,14 @@
 const initialstate = {
-    name         : '',
-    room    : '',
-	roomList       : [], 
-	users   : [],
-	messages   : []
+	roomList : [], 
+	users    : [],
+	messages : []
 }
 
 export default function ChatReducer(state = initialstate, action) {
 	const { payload, type } = action;
 
 	switch (type) {
-        case 'SET_ROOM': {
-			return {
-				...state,
-				...payload
-			}
-		}
-
-		case 'SET_NAME': {
-			return {
-				...state,
-				...payload
-			}
-		}
+      
 
 		case 'SET_MESSAGES': {
 			return {

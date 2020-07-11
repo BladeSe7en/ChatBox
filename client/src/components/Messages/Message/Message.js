@@ -1,11 +1,14 @@
 import React from 'react';
+import { useDispatch, useSelector } from "react-redux";
+
 
 import './Message.css';
 
 import ReactEmoji from 'react-emoji';
 
-const Message = ({ message: { text, user }, name }) => {
+const Message = ({ message: { text, user }}) => {
   let isSentByCurrentUser = false;
+  const name = useSelector(state => state.Join.name);
 
   const trimmedName = name.trim().toLowerCase();
 

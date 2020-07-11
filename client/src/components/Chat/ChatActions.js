@@ -1,20 +1,4 @@
-export const setRoom = value => {
-	return {
-		type: 'SET_ROOM',
-		payload: {
-			room: value
-		}
-	};
-};
 
-export const setName = value => {
-	return {
-		type: 'SET_NAME',
-		payload: {
-			name: value
-		}
-	};
-};
 
 
 
