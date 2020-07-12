@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import io from "socket.io-client";
 
 import './Input.css';
+import { setMessage } from './InputActions';
 
-const Input = ({ setMessage, sendMessage, message }) => (
+let socket;
+
+const Input = () => {
+  const message = useSelector(state => state.Input.message);
+
+  useEffect(() => {
+    const ENDPOINT = process.env.REACT_APP_ENDPOINT
+    socket = io(ENDPOINT);
+ }, []);
+
+  const sendMessage = (event) => {
+    event.preventDefault();
+    if(message) {
+      socket.emit('sendMessage', message);
+    }
+  }
+
+  return (
   <form className="form">
     <input
       className="input"
@@ -15,5 +35,6 @@ const Input = ({ setMessage, sendMessage, message }) => (
     <button className="sendButton" onClick={e => sendMessage(e)}>Send</button>
   </form>
 )
+  }
 
 export default Input;

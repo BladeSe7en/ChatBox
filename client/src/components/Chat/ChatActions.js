@@ -14,14 +14,6 @@ export const setMessages = value => {
 
 
 
-export const setRoomList = value => {
-	return {
-		type: 'SET_ROOL_LIST',
-		payload: {
-			roomList: value
-		}
-	};
-};
 
 export const setUsers = value => {
     console.log('value: ',value)

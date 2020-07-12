@@ -1,5 +1,5 @@
 const initialstate = {
-	roomList : [], 
+	 
 	users    : [],
 	messages : []
 }
@@ -13,16 +13,12 @@ export default function ChatReducer(state = initialstate, action) {
 		case 'SET_MESSAGES': {
 			return {
 				...state,
-				...payload
+				...payload,
+				message: ''
 			}
 		}
 
-		case 'SET_ROOM_LIST': {
-			return {
-				...state,
-				...payload
-			}
-		}
+		
 
 		case 'SET_USERS': {
 			return {

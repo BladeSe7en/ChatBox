@@ -1,7 +1,7 @@
 const initialstate = {
     name: '',
     room: '',
-    test: 'hello'
+    roomList : []
 }
 
 export default function JoinReducer(state = initialstate, action) {
@@ -9,7 +9,6 @@ export default function JoinReducer(state = initialstate, action) {
 
 	switch (type) {
         case 'SET_ROOM': {
-            console.log('this is payload setroom: ',payload)
 			return {
 				...state,
 				...payload
@@ -17,10 +16,17 @@ export default function JoinReducer(state = initialstate, action) {
 		}
 
 		case 'SET_NAME': {
-            console.log('this is payload setName: ',payload)
 			return {
 				...state,
 				...payload
+			}
+		}
+
+		case 'SET_ROOM_LIST': {
+			console.log('payload in setroomlist reducer: ',payload)
+			return {
+				...state,
+				roomList: payload
 			}
 		}
 

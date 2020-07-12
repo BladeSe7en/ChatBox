@@ -7,7 +7,7 @@ import closeIcon from '../../icons/closeIcon.png';
 import './InfoBar.css';
 
 const InfoBar = () => {
-  const room = useSelector(state => state.Join.name);
+  const room = useSelector(state => state.Join.room);
   return (
     <div className="infoBar">
       <div className="leftInnerContainer">

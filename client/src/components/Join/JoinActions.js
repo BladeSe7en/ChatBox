@@ -1,5 +1,5 @@
 export const setRoom = value => {
-    console.log('inside setRoom action: ',value)
+	
 	return {
 		type: 'SET_ROOM',
 		payload: {
@@ -9,11 +9,20 @@ export const setRoom = value => {
 };
 
 export const setName = value => {
-	console.log('inside setName action: ',value)
 	return {
 		type: 'SET_NAME',
 		payload: {
 			name: value
+		}
+	};
+};
+
+export const setRoomList = value => {
+	console.log('value in setroomlist action: ',value)
+	return {
+		type: 'SET_ROOM_LIST',
+		payload: {
+			roomList: value
 		}
 	};
 };

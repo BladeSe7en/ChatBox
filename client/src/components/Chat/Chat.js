@@ -9,26 +9,42 @@ import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
 
 import './Chat.css';
-import { setName, setRoom, setUsers, setMessages, setRoomList } from './ChatActions';
+import { setUsers, setMessages } from './ChatActions';
+import { setMessage } from '../Input/InputActions';
+import { setName, setRoom, setRoomList } from '../Join/JoinActions';
 
 
 let socket;
 
 const Chat = ({ location }) => {
-  const [users, setUsers] = useState('');
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-  const ENDPOINT = 'https://chat-box-bpc.herokuapp.com/';
+  const roomList = useSelector(state => state.Join.roomList);
+  const room = useSelector(state => state.Join.room);
+  const users = useSelector(state => state.Chat.users);
+  const message = useSelector(state => state.Input.message);
+  const messages = useSelector(state => state.Chat.messages);
 
+
+ // const ENDPOINT = 'https://chat-box-bpc.herokuapp.com/';
+  const ENDPOINT = process.env.REACT_APP_ENDPOINT
   const name = useSelector(state => state.Chat.name);
   const dispatch = useDispatch();
 
 
+  useEffect(() => {
+    socket = io(ENDPOINT);
+     socket.on('roomList', list => {
+       console.log('typeof: ',typeof(list))
+       console.log('list in join: ',list.split(','));
+       dispatch(setRoomList(list.split(',')))
+     });
+ }, [roomList]);
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
+    console.log('room from location search: ',room )
 
-    socket = io(ENDPOINT);
+    
+    
 
     socket.emit('join', { name, room }, (error) => {
       if(error) {
@@ -39,28 +55,22 @@ const Chat = ({ location }) => {
   
   useEffect(() => {
     socket.on('message', message => {
-      setMessages(messages => [ ...messages, message ]);
+      dispatch(setMessages([...messages, message]));
     });
     
     socket.on("roomData", ({ users }) => {
-      setUsers(users);
+      dispatch(setUsers(users));
     });
 }, []);
 
-  const sendMessage = (event) => {
-    event.preventDefault();
-
-    if(message) {
-      socket.emit('sendMessage', message, () => setMessage(''));
-    }
-  }
+ 
 
   return (
     <div className="outerContainer">
       <div className="container">
           <InfoBar />
           <Messages messages={messages} name={name} />
-          <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+          <Input />
       </div>
       <TextContainer users={users}/>
     </div>

@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import io from "socket.io-client";
 
 import './Join.css';
-import { setName, setRoom } from './JoinActions';
+import { setName, setRoom, setRoomList } from './JoinActions';
 
+let socket;
+const ENDPOINT = process.env.REACT_APP_ENDPOINT
+console.log('this is endpoint2: ',ENDPOINT)
 
 export default function SignIn() {
 const dispatch = useDispatch();
 
-  const name = useSelector(state => state.Join.name);
-  const room = useSelector(state => state.Join.name);
+const name = useSelector(state => state.Join.name);
+const room = useSelector(state => state.Join.room);
+const roomList = useSelector(state => state.Join.roomList);
+
+useEffect(() => {
+  socket = io(ENDPOINT);
+    socket.on('roomList', list => {
+      console.log('list in join: ',list);
+      dispatch(setRoomList(list.split(',')))
+    });
+});
 
    return (
     <div className="joinOuterContainer">

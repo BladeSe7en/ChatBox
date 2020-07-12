@@ -9,48 +9,53 @@ const router = require('./router');
 
 const app = express();
 const server = http.createServer(app);
-
-const io = require("socket.io")(server, {
-  handlePreflightRequest: (req, res) => {
-      const headers = {
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-          "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
-          "Access-Control-Allow-Credentials": true
-      };
-      res.writeHead(200, headers);
-      res.end();
-  }
-});
+const io = socketio(server);
 
 app.use(cors());
 app.use(router);
 
-const whitelist = ['https://chatbox7.netlify.app/', 'https://chat-box-bpc.herokuapp.com/']
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
- 
-app.get('/products/:id', cors(corsOptions), function (req, res, next) {
-  res.json({msg: 'This is CORS-enabled for a whitelisted domain.'})
-})
-
 io.on('connect', (socket) => {
-    console.log('A user has connected')
+  console.log('A user has connected')
   socket.on('join', ({ name, room }, callback) => {
-      console.log(`${name} has joined room ${room}.`)
-    const { error, user } = addUser({ id: socket.id, name, room });
+    console.log(`${name} has joined room ${room}.`)
+    const { error, user } = addUser({ id: socket.id, name, room: `room: ${room}` });
 
-    if(error) return callback(error);
+    if (error) return callback(error);
 
     socket.join(user.room);
 
-    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room}.`});
+    let rooms = (io.of('/').adapter.sids);
+    console.log('rooms: ', rooms)
+
+
+
+    let list = [];
+    const iterate = (rooms) => {
+      Object.keys(rooms).forEach(key => {
+
+        console.log(`key: ${key}`)
+        list.push(key)
+
+        if (typeof rooms[key] === 'object') {
+          iterate(rooms[key])
+        }
+      })
+    }
+    iterate(rooms)
+    console.log('list before filter: ', list);
+    let filtered = []
+    list.map(name => {
+      if (name.includes('room:')) {
+        filtered.push(name.slice(6))
+      }
+    })
+
+    console.log('filtered: ', filtered)
+    socket.emit('roomList', `${[filtered]}`)
+
+    console.log('-----------------------')
+
+    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room}.` });
     socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined!` });
 
     io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
@@ -68,13 +73,22 @@ io.on('connect', (socket) => {
 
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
+    console.log(`${socket.id} has disconnected`)
 
-    if(user) {
+    if (user) {
       io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
-      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
     }
   })
 });
 
-server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));
+
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => console.log(`Server is listening on http://localhost:${PORT}`));
+
+
+
+
+
 

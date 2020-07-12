@@ -3,8 +3,9 @@ import Join from './Join';
 
 function mapStoreToProps(store) {
     return {
-        name: store.Join.name,
-        room: store.Join.room
+        name    : store.Join.name,
+        room    : store.Join.room,
+        roomList: store.Join.roomList
     }
 }
 
