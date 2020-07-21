@@ -3,6 +3,7 @@ const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
 
+
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
 
 const router = require('./router');
@@ -18,7 +19,12 @@ io.on('connect', (socket) => {
   console.log('A user has connected')
   socket.on('join', ({ name, room }, callback) => {
     console.log(`${name} has joined room ${room}.`)
+
+  
+
     const { error, user } = addUser({ id: socket.id, name, room: `room: ${room}` });
+
+    io.to(user.id).emit('user', user)
 
     if (error) return callback(error);
 
@@ -26,8 +32,6 @@ io.on('connect', (socket) => {
 
     let rooms = (io.of('/').adapter.sids);
     console.log('rooms: ', rooms)
-
-
 
     let list = [];
     const iterate = (rooms) => {
@@ -43,15 +47,16 @@ io.on('connect', (socket) => {
     }
     iterate(rooms)
     console.log('list before filter: ', list);
-    let filtered = []
-    list.map(name => {
-      if (name.includes('room:')) {
-        filtered.push(name.slice(6))
+    let roomlist = []
+    list.map((room) => {
+      if (room.includes('room:')) {
+        console.log('room.splice(6): ', room.slice(6))
+        roomlist.push(room.slice(6))
       }
+      return roomlist;
     })
-
-    console.log('filtered: ', filtered)
-    socket.emit('roomList', `${[filtered]}`)
+    console.log('list after filter: ', roomlist);
+    socket.emit('roomList', `${[roomlist]}`)
 
     console.log('-----------------------')
 
@@ -64,11 +69,11 @@ io.on('connect', (socket) => {
   });
 
   socket.on('sendMessage', (message, callback) => {
-    const user = getUser(socket.id);
+   // const user = getUser(socket.id);
 
-    io.to(user.room).emit('message', { user: user.name, text: message });
+   // io.to(user.room).emit('message', { user: user.name, text: message });
 
-    callback();
+    //callback();
   });
 
   socket.on('disconnect', () => {

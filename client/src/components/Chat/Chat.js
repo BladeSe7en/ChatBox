@@ -29,9 +29,16 @@ const Chat = ({ location }) => {
   const name = useSelector(state => state.Chat.name);
   const dispatch = useDispatch();
 
+  socket = io(ENDPOINT);
+  useEffect(() => {
+    console.log('socket in 1st use: ', socket)
+    socket.on('user', user => {
+      console.log('this should be user: ',user)
+    })
+  })
 
   useEffect(() => {
-    socket = io(ENDPOINT);
+    console.log('socket in 2nd use :', socket)
      socket.on('roomList', list => {
        console.log('typeof: ',typeof(list))
        console.log('list in join: ',list.split(','));

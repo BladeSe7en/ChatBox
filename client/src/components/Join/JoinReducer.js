@@ -26,7 +26,7 @@ export default function JoinReducer(state = initialstate, action) {
 			console.log('payload in setroomlist reducer: ',payload)
 			return {
 				...state,
-				roomList: payload
+				...payload
 			}
 		}
 

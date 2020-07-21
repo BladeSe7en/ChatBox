@@ -7,7 +7,7 @@ export default function InputReducer(state = initialstate, action) {
 
 	switch (type) {
 		case 'SET_MESSAGE': {
-			console.log('payload in reducer: ',payload)
+			console.log('payload in setMessage reducer: ',payload)
 			return {
 				...state,
 				...payload
