@@ -16,7 +16,7 @@ app.use(cors());
 app.use(router);
 
 io.on('connect', (socket) => {
-  console.log('A user has connected')
+  console.log(`A user has connected with ID: ${socket.id}`)
   socket.on('join', ({ name, room }, callback) => {
     console.log(`${name} has joined room ${room}.`)
 
@@ -69,11 +69,11 @@ io.on('connect', (socket) => {
   });
 
   socket.on('sendMessage', (message, callback) => {
-   // const user = getUser(socket.id);
+   const user = getUser(socket.id);
 
-   // io.to(user.room).emit('message', { user: user.name, text: message });
+   io.to(user.room).emit('message', { user: user.name, text: message });
 
-    //callback();
+    callback();
   });
 
   socket.on('disconnect', () => {
